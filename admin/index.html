@@ -13,32 +13,5 @@
 
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 
-  <script>
-    if (window.netlifyIdentity) {
-      // ✅ 防止重复打开登录窗口
-      let loginModalOpened = false;
-
-      window.netlifyIdentity.on("init", user => {
-        if (!user && !loginModalOpened) {
-          loginModalOpened = true;
-          window.netlifyIdentity.open();
-        }
-      });
-
-      // ✅ 防止重复跳转
-      let loginHandled = false;
-      window.netlifyIdentity.on("login", () => {
-        if (!loginHandled) {
-          loginHandled = true;
-          document.location.href = "/admin/";
-        }
-      });
-
-      window.netlifyIdentity.on("logout", () => {
-        document.location.href = "/";
-      });
-    }
-  </script>
-
 </body>
 </html>
