@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>后台管理</title>
+</head>
+
+<body>
+
+  <!-- Netlify Identity -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <!-- Decap CMS（改用国内 bootcdn） -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/decap-cms/3.10.1/decap-cms.js"></script>
+
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.open();
+        }
+      });
+
+      window.netlifyIdentity.on("login", () => {
+        document.location.href = "/admin/";
+      });
+
+      window.netlifyIdentity.on("logout", () => {
+        document.location.href = "/";
+      });
+
+      window.netlifyIdentity.on("invite", () => {
+        window.netlifyIdentity.open();
+      });
+
+      window.netlifyIdentity.on("recovery", () => {
+        window.netlifyIdentity.open();
+      });
+
+      window.netlifyIdentity.on("error", err => {
+        console.error("Identity错误:", err);
+      });
+    }
+  </script>
+
+</body>
+</html>
