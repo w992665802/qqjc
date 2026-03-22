@@ -1,20 +1,25 @@
 {
   "period": "2026-03-01 至 2026-04-01",
   "stats": {
-    "winRate": "78%",
-    "totalPredict": 36,
-    "winCount": 28,
-    "streak": 5
+    "winRate": "1%",
+    "totalPredict": 1,
+    "winCount": 1,
+    "streak": 1
   },
   "recommendations": [
     {
       "icon": "🔥",
-      "name": "023",
-      "prediction": "1"
+      "name": "023纽约城VS迈阿密国际",
+      "prediction": "3+4"
     },
     {
       "icon": "⭐",
-      "name": "023 奥萨苏纳 VS 赫罗纳",
+      "name": "025奥格斯堡VS斯图加特",
+      "prediction": "2+3"
+    },
+    {
+      "icon": "⭐",
+      "name": "026佛罗伦萨VS国际米兰",
       "prediction": "2+3"
     }
   ],
