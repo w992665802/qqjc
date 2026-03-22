@@ -9,38 +9,33 @@
 
 <body>
 
-  <!-- ✅ 本地 Netlify Identity -->
   <script src="/static/js/netlify-identity-widget.js"></script>
 
-  <!-- ✅ 本地 Decap CMS -->
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 
   <script>
     if (window.netlifyIdentity) {
+      // ✅ 防止重复打开登录窗口
+      let loginModalOpened = false;
+
       window.netlifyIdentity.on("init", user => {
-        if (!user) {
+        if (!user && !loginModalOpened) {
+          loginModalOpened = true;
           window.netlifyIdentity.open();
         }
       });
 
+      // ✅ 防止重复跳转
+      let loginHandled = false;
       window.netlifyIdentity.on("login", () => {
-        document.location.href = "/admin/";
+        if (!loginHandled) {
+          loginHandled = true;
+          document.location.href = "/admin/";
+        }
       });
 
       window.netlifyIdentity.on("logout", () => {
         document.location.href = "/";
-      });
-
-      window.netlifyIdentity.on("invite", () => {
-        window.netlifyIdentity.open();
-      });
-
-      window.netlifyIdentity.on("recovery", () => {
-        window.netlifyIdentity.open();
-      });
-
-      window.netlifyIdentity.on("error", err => {
-        console.error("Identity错误:", err);
       });
     }
   </script>
