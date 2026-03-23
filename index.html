@@ -156,6 +156,7 @@
             opacity: 0;
             animation: scaleIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s forwards;
             transition: transform 0.3s ease;
+            cursor: pointer;
         }
 
         .hero-logo:hover { transform: scale(1.05) rotate(2deg); }
@@ -362,6 +363,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             user-select: none;
+            text-decoration: none;
+            color: inherit;
         }
 
         .league-item:hover {
@@ -398,6 +401,8 @@
             transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            color: inherit;
         }
 
         .rec-item::before {
@@ -453,6 +458,18 @@
             letter-spacing: 0.5px;
         }
 
+        /* 链接指示器 */
+        .has-link::after {
+            content: '↗';
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-left: 6px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .has-link:hover::after { opacity: 1; }
+
         .table-wrap {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -497,6 +514,32 @@
 
         .record-table tbody tr:last-child td { border-bottom: none; }
         .record-table tbody tr:hover td { background: rgba(128,128,128,0.03); }
+
+        /* 可点击行 */
+        .record-table tbody tr.clickable-row {
+            cursor: pointer;
+        }
+
+        .record-table tbody tr.clickable-row:hover td {
+            background: rgba(124, 110, 240, 0.05);
+        }
+
+        .record-table tbody tr.clickable-row td a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .record-table .link-icon {
+            font-size: 10px;
+            color: var(--accent);
+            opacity: 0;
+            margin-left: 4px;
+            transition: opacity 0.2s ease;
+        }
+
+        .record-table tbody tr.clickable-row:hover .link-icon {
+            opacity: 1;
+        }
 
         .badge {
             display: inline-flex;
@@ -647,9 +690,21 @@
         .match-item {
             padding: 16px 0;
             border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
         }
 
         .match-item:last-child { border-bottom: none; }
+
+        .match-item.has-link {
+            cursor: pointer;
+            padding: 16px 10px;
+            border-radius: 10px;
+            margin: 0 -10px;
+        }
+
+        .match-item.has-link:hover {
+            background: rgba(124, 110, 240, 0.05);
+        }
 
         .match-teams {
             font-size: 14px;
@@ -694,6 +749,17 @@
             background: var(--red-dim);
             color: var(--red);
             animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .match-link-hint {
+            font-size: 10px;
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .match-item.has-link:hover .match-link-hint {
+            opacity: 1;
         }
 
         .modal-empty {
@@ -829,7 +895,7 @@
 
     <div class="wrapper">
         <div class="hero">
-            <img src="/二维码.jpg" alt="乔乔竞彩" class="hero-logo">
+            <img src="/二维码.jpg" alt="乔乔竞彩" class="hero-logo" id="heroLogo">
             <h1>乔乔竞彩总进球</h1>
             <div class="hero-sub">乔乔竞彩足球预测 · 总进球预测</div>
             <div class="meta-row">
@@ -940,8 +1006,9 @@
     </div>
 
     <script>
-        // ===== 全局存储联赛数据 =====
+        // ===== 全局数据 =====
         var leaguesData = [];
+        var globalSiteLink = '';
 
         // ===== 主题切换 =====
         function toggleTheme() {
@@ -985,22 +1052,17 @@
             requestAnimationFrame(step);
         }
 
-        // ===== 根据比赛记录自动计算统计数据 =====
+        // ===== 根据比赛记录自动计算统计 =====
         function calcStatsFromRecords(records) {
             if (!records || records.length === 0) {
                 return { winRate: 0, totalPredict: 0, winCount: 0, streak: 0 };
             }
-
-            // 只统计已有结果的记录（排除"待中"）
             var decided = records.filter(function(r) {
                 return r.result === '胜' || r.result === '负' || r.result === '平';
             });
-
             var totalPredict = decided.length;
             var winCount = decided.filter(function(r) { return r.result === '胜'; }).length;
             var winRate = totalPredict > 0 ? Math.round((winCount / totalPredict) * 100) : 0;
-
-            // 计算当前连红：从最新的已出结果记录开始往前数连续的"胜"
             var streak = 0;
             for (var i = 0; i < decided.length; i++) {
                 if (decided[i].result === '胜') {
@@ -1009,30 +1071,18 @@
                     break;
                 }
             }
-
-            return {
-                winRate: winRate,
-                totalPredict: totalPredict,
-                winCount: winCount,
-                streak: streak
-            };
+            return { winRate: winRate, totalPredict: totalPredict, winCount: winCount, streak: streak };
         }
 
-        // ===== 根据比赛记录自动统计联赛数据 =====
+        // ===== 根据比赛记录自动统计联赛 =====
         function calcLeaguesFromRecords(records) {
             if (!records || records.length === 0) return [];
-
             var leagueMap = {};
             var leagueOrder = [];
-
             records.forEach(function(r) {
                 if (!r.league) return;
                 if (!leagueMap[r.league]) {
-                    leagueMap[r.league] = {
-                        name: r.league,
-                        count: 0,
-                        matches: []
-                    };
+                    leagueMap[r.league] = { name: r.league, count: 0, matches: [], link: '' };
                     leagueOrder.push(r.league);
                 }
                 leagueMap[r.league].count++;
@@ -1041,11 +1091,18 @@
                     time: r.date || '--',
                     prediction: r.goals || '--',
                     status: r.result === '待中' ? '未开始' : (r.score && r.score !== '未开始' ? '已结束' : '未开始'),
-                    score: r.score || '--'
+                    score: r.score || '--',
+                    link: r.link || ''
                 });
             });
-
             return leagueOrder.map(function(name) { return leagueMap[name]; });
+        }
+
+        // ===== 安全打开链接 =====
+        function openLink(url) {
+            if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
         }
 
         // ===== 加载数据 =====
@@ -1054,7 +1111,16 @@
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
 
-                    // 1. 更新统计周期
+                    // 全站链接
+                    globalSiteLink = data.siteLink || '';
+
+                    // Logo链接
+                    if (globalSiteLink) {
+                        document.getElementById('heroLogo').style.cursor = 'pointer';
+                        document.getElementById('heroLogo').onclick = function() { openLink(globalSiteLink); };
+                    }
+
+                    // 1. 统计周期
                     document.getElementById('period').textContent = data.period || '--';
 
                     // 2. 渲染比赛记录
@@ -1065,38 +1131,46 @@
                         document.getElementById('recordBody').innerHTML = records.map(function(r) {
                             var bc = r.result === '胜' ? 'badge-win' : r.result === '负' ? 'badge-lose' : r.result === '待中' ? 'badge-pending' : 'badge-draw';
                             var sc = r.score === '未开始' ? '<span class="badge badge-pending">⏳ 未开始</span>' : r.score;
-                            return '<tr><td>' + r.date + '</td><td>' + r.league + '</td>' +
-                                '<td style="text-align:left;font-weight:500;color:var(--text)">' + r.teams + '</td>' +
-                                '<td>' + sc + '</td><td style="font-family:DM Mono,monospace;font-weight:600">' + r.goals + '</td>' +
+                            var rowClass = r.link ? ' class="clickable-row"' : '';
+                            var linkIcon = r.link ? '<span class="link-icon">↗</span>' : '';
+                            var onclick = r.link ? ' onclick="openLink(\'' + r.link + '\')"' : '';
+                            return '<tr' + rowClass + onclick + '>' +
+                                '<td>' + r.date + '</td>' +
+                                '<td>' + r.league + '</td>' +
+                                '<td style="text-align:left;font-weight:500;color:var(--text)">' + r.teams + linkIcon + '</td>' +
+                                '<td>' + sc + '</td>' +
+                                '<td style="font-family:DM Mono,monospace;font-weight:600">' + r.goals + '</td>' +
                                 '<td><span class="badge ' + bc + '">' + r.result + '</span></td></tr>';
                         }).join('');
                     } else {
                         document.getElementById('recordBody').innerHTML = '<tr><td colspan="6" style="color:var(--text-dim);padding:30px">暂无比赛记录</td></tr>';
                     }
 
-                    // 3. 根据比赛记录自动计算胜率统计
+                    // 3. 自动计算胜率统计
                     var stats = calcStatsFromRecords(records);
                     animateValue('winRate', 0, stats.winRate, 1200, '%');
                     animateValue('totalPredict', 0, stats.totalPredict, 1200);
                     animateValue('winCount', 0, stats.winCount, 1200);
                     animateValue('streak', 0, stats.streak, 800);
 
-                    // 4. 根据比赛记录自动统计联赛数据（如果data.json中没有leagues字段）
+                    // 4. 联赛数据
                     if (data.leagues && data.leagues.length > 0) {
                         leaguesData = data.leagues;
                     } else {
                         leaguesData = calcLeaguesFromRecords(records);
                     }
-
                     renderLeagues(leaguesData);
 
-                    // 5. 渲染今日推荐
+                    // 5. 今日推荐
                     if (data.recommendations && data.recommendations.length > 0) {
                         document.getElementById('recommendList').innerHTML = data.recommendations.map(function(item, i) {
-                            return '<div class="rec-item" style="animation:fadeUp 0.5s ease ' + (0.1*i) + 's both">' +
+                            var hasLink = item.link ? ' has-link' : '';
+                            var linkTag = item.link ? 'a' : 'div';
+                            var linkAttr = item.link ? ' href="' + item.link + '" target="_blank" rel="noopener noreferrer"' : '';
+                            return '<' + linkTag + linkAttr + ' class="rec-item' + hasLink + '" style="animation:fadeUp 0.5s ease ' + (0.1*i) + 's both">' +
                                 '<div class="rec-icon">' + item.icon + '</div>' +
                                 '<div class="rec-info"><div class="rec-name">' + item.name + '</div></div>' +
-                                '<span class="rec-badge">' + item.prediction + '</span></div>';
+                                '<span class="rec-badge">' + item.prediction + '</span></' + linkTag + '>';
                         }).join('');
                     } else {
                         document.getElementById('recommendList').innerHTML =
@@ -1120,9 +1194,9 @@
                     '<div class="league-item"><span class="league-name">暂无联赛数据</span><span class="league-count">0 场</span></div>';
                 return;
             }
-
             document.getElementById('leagueList').innerHTML = leagues.map(function(league, index) {
-                return '<div class="league-item" onclick="openLeagueModal(' + index + ')">' +
+                var hasLink = league.link ? ' has-link' : '';
+                return '<div class="league-item' + hasLink + '" onclick="openLeagueModal(' + index + ')">' +
                     '<span class="league-name">' + league.name + '</span>' +
                     '<span class="league-count">' + league.count + ' 场</span></div>';
             }).join('');
@@ -1141,13 +1215,17 @@
                 container.innerHTML = league.matches.map(function(match) {
                     var statusClass = match.status === '已结束' ? 'ended' : (match.status === '进行中' ? 'live' : 'upcoming');
                     var statusText = match.status || '未开始';
-                    return '<div class="match-item">' +
+                    var hasLink = match.link ? ' has-link' : '';
+                    var onclick = match.link ? ' onclick="openLink(\'' + match.link + '\')"' : '';
+                    var linkHint = match.link ? '<span class="match-link-hint">点击查看详情 ↗</span>' : '';
+                    return '<div class="match-item' + hasLink + '"' + onclick + '>' +
                         '<div class="match-teams">' + match.teams + '</div>' +
                         '<div class="match-meta">' +
                             '<span>⏰ ' + match.time + '</span>' +
                             (match.score && match.score !== '--' ? '<span>⚽ ' + match.score + '</span>' : '') +
                             '<span class="match-prediction">🎯 ' + match.prediction + '</span>' +
                             '<span class="match-status-tag ' + statusClass + '">' + statusText + '</span>' +
+                            linkHint +
                         '</div></div>';
                 }).join('');
             } else {
@@ -1166,12 +1244,10 @@
             document.body.style.overflow = '';
         }
 
-        // 点击遮罩层关闭
         document.getElementById('leagueModal').addEventListener('click', function(e) {
             if (e.target === this) closeLeagueModal();
         });
 
-        // ESC键关闭
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeLeagueModal();
         });
@@ -1179,6 +1255,5 @@
         // ===== 启动 =====
         loadData();
     </script>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </body>
 </html>
