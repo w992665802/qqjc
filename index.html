@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ===== CSS VARIABLES - DARK ===== */
         :root {
             --bg: #0a0a0f;
             --surface: #12121a;
@@ -40,7 +39,6 @@
             --noise-opacity: 0.03;
         }
 
-        /* ===== CSS VARIABLES - LIGHT ===== */
         [data-theme="light"] {
             --bg: #f4f1ec;
             --surface: #ffffff;
@@ -111,7 +109,6 @@
             padding: 24px 16px 60px;
         }
 
-        /* ===== THEME TOGGLE ===== */
         .theme-toggle {
             position: fixed;
             top: 20px; right: 20px;
@@ -145,7 +142,6 @@
         [data-theme="light"] .theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
         [data-theme="light"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg) scale(0); }
 
-        /* ===== HERO ===== */
         .hero {
             text-align: center;
             padding: 48px 20px 40px;
@@ -213,7 +209,6 @@
         .meta-chip .label { color: var(--text-dim); font-size: 11px; }
         .meta-chip .value { font-family: 'DM Mono', monospace; color: var(--text); font-size: 12px; }
 
-        /* ===== LIVE CLOCK ===== */
         .live-clock {
             margin-top: 16px;
             display: flex;
@@ -238,7 +233,6 @@
         .clock-separator { color: var(--text-dim); font-size: 11px; }
         .clock-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
 
-        /* ===== SECTIONS ===== */
         .section {
             margin-top: 32px;
             opacity: 0;
@@ -289,7 +283,6 @@
             margin-left: 8px;
         }
 
-        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -321,7 +314,7 @@
         .stat-card:nth-child(1)::before { background: var(--gold); }
         .stat-card:nth-child(2)::before { background: var(--accent); }
         .stat-card:nth-child(3)::before { background: var(--green); }
-        .stat-card:nth-child(4)::before { background: var(--orange); }
+        .stat-card:nth-child(4)::before { background: orange; }
 
         .stat-card:hover {
             transform: translateY(-4px);
@@ -342,7 +335,7 @@
         .stat-card:nth-child(1) .stat-value { color: var(--gold); }
         .stat-card:nth-child(2) .stat-value { color: var(--accent); }
         .stat-card:nth-child(3) .stat-value { color: var(--green); }
-        .stat-card:nth-child(4) .stat-value { color: var(--orange); }
+        .stat-card:nth-child(4) .stat-value { color: orange; }
 
         .stat-label {
             font-size: 11px;
@@ -352,7 +345,6 @@
             text-transform: uppercase;
         }
 
-        /* ===== LEAGUES ===== */
         .league-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -367,13 +359,19 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 14px 16px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            user-select: none;
         }
 
         .league-item:hover {
             border-color: var(--border-hover);
             background: var(--surface-alt);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
+
+        .league-item:active { transform: translateY(0); }
 
         .league-name { font-size: 13px; font-weight: 600; color: var(--text); }
 
@@ -387,7 +385,6 @@
             font-weight: 500;
         }
 
-        /* ===== RECOMMENDATIONS ===== */
         .rec-list { display: flex; flex-direction: column; gap: 10px; }
 
         .rec-item {
@@ -456,7 +453,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== RECORDS TABLE ===== */
         .table-wrap {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -518,7 +514,6 @@
         .badge-pending { color: var(--orange); background: var(--orange-dim); }
         .badge-draw { color: var(--text-muted); background: rgba(128,128,128,0.08); }
 
-        /* ===== TIP ===== */
         .tip-card {
             background: var(--surface);
             border: 1px solid rgba(248,113,113,0.15);
@@ -546,7 +541,6 @@
         .tip-text { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
         .tip-text strong { color: var(--red); font-weight: 600; }
 
-        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -558,7 +552,6 @@
 
         .footer span { color: var(--red); }
 
-        /* ===== TABLE SCROLL HINT ===== */
         .scroll-hint {
             display: none;
             text-align: center;
@@ -573,104 +566,224 @@
             content: '← 横向滑动查看完整表格 →';
         }
 
-        /* ============================================================
-           RESPONSIVE - TABLET (768px ~ 641px)
-           ============================================================ */
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 520px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+            border-color: var(--border-hover);
+            background: var(--surface);
+        }
+
+        .modal-body {
+            padding: 16px 24px 24px;
+            overflow-y: auto;
+            max-height: calc(80vh - 70px);
+        }
+
+        .match-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .match-item:last-child { border-bottom: none; }
+
+        .match-teams {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .match-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .match-prediction {
+            font-family: 'DM Mono', monospace;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .match-status-tag {
+            padding: 2px 10px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .match-status-tag.ended {
+            background: var(--green-dim);
+            color: var(--green);
+        }
+
+        .match-status-tag.upcoming {
+            background: var(--orange-dim);
+            color: var(--orange);
+        }
+
+        .match-status-tag.live {
+            background: var(--red-dim);
+            color: var(--red);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .modal-empty {
+            text-align: center;
+            color: var(--text-dim);
+            padding: 40px 0;
+            font-size: 13px;
+        }
+
+        .modal-count-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) and (min-width: 641px) {
             .wrapper { padding: 20px 24px 50px; }
             .hero h1 { font-size: 28px; }
             .stat-value { font-size: 26px; }
         }
 
-        /* ============================================================
-           RESPONSIVE - PHONE (640px ~ 361px)
-           ============================================================ */
         @media (max-width: 640px) {
             .wrapper { padding: 16px 12px 40px; }
-
             .hero { padding: 36px 12px 30px; }
             .hero h1 { font-size: 24px; }
             .hero-logo { width: 80px; height: 80px; border-radius: 20px; }
             .hero-sub { font-size: 12px; }
-
             .meta-row { gap: 8px; }
             .meta-chip { padding: 5px 10px; font-size: 11px; }
-
             .live-clock { gap: 5px; font-size: 11px; }
-
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
-
             .stat-card { padding: 16px 10px; border-radius: 14px; }
             .stat-value { font-size: 22px; }
             .stat-label { font-size: 10px; }
-
             .league-grid { grid-template-columns: 1fr; gap: 8px; }
             .league-item { padding: 12px 14px; }
-
             .rec-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
                 padding: 14px 16px;
             }
-
             .rec-badge { align-self: flex-start; }
-
             .record-table { min-width: 480px; font-size: 12px; }
             .record-table thead th,
             .record-table tbody td { padding: 10px 8px; }
-
             .scroll-hint { display: block; }
-
             .section { margin-top: 24px; }
             .section-title { font-size: 14px; }
             .section-title .sub { display: none; }
-
             .theme-toggle {
                 width: 40px; height: 40px;
                 top: 12px; right: 12px;
                 font-size: 18px;
                 border-radius: 12px;
             }
-
             .tip-card { padding: 16px 14px; gap: 10px; border-radius: 14px; }
             .tip-icon { width: 34px; height: 34px; font-size: 16px; }
             .tip-text { font-size: 12px; }
+            .modal-content { width: 94%; border-radius: 14px; }
+            .modal-header { padding: 16px 18px; }
+            .modal-header h3 { font-size: 16px; }
+            .modal-body { padding: 12px 18px 18px; }
         }
 
-        /* ============================================================
-           RESPONSIVE - SMALL PHONE (360px and below)
-           ============================================================ */
         @media (max-width: 360px) {
             .wrapper { padding: 12px 8px 32px; }
-
             .hero { padding: 28px 8px 24px; }
             .hero h1 { font-size: 20px; }
             .hero-logo { width: 68px; height: 68px; border-radius: 16px; }
-
             .meta-row { flex-direction: column; align-items: center; gap: 6px; }
             .meta-chip { font-size: 10px; padding: 4px 8px; }
-
             .stats-grid { gap: 8px; }
             .stat-card { padding: 12px 6px; border-radius: 12px; }
             .stat-value { font-size: 18px; margin-bottom: 6px; }
             .stat-label { font-size: 9px; }
-
             .section-header { margin-bottom: 10px; }
             .section-icon { width: 28px; height: 28px; font-size: 14px; }
             .section-title { font-size: 13px; }
-
             .rec-icon { width: 34px; height: 34px; font-size: 18px; }
             .rec-name { font-size: 13px; }
             .rec-badge { font-size: 12px; padding: 5px 12px; }
-
             .record-table { min-width: 440px; font-size: 11px; }
             .record-table thead th,
             .record-table tbody td { padding: 8px 6px; }
-
             .theme-toggle {
                 width: 36px; height: 36px;
                 top: 10px; right: 10px;
@@ -679,9 +792,6 @@
             }
         }
 
-        /* ============================================================
-           RESPONSIVE - LANDSCAPE PHONE
-           ============================================================ */
         @media (max-height: 500px) and (orientation: landscape) {
             .hero { padding: 20px 12px; }
             .hero-logo { width: 50px; height: 50px; border-radius: 14px; margin-bottom: 10px; }
@@ -694,9 +804,6 @@
             .stat-value { font-size: 20px; }
         }
 
-        /* ============================================================
-           ANIMATIONS
-           ============================================================ */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
@@ -763,10 +870,7 @@
                 <div class="section-title">热门联赛</div>
             </div>
             <div class="league-grid" id="leagueList">
-                <div class="league-item"><span class="league-name">🏴󠁧󠁥󠁥󠁮󠁧󠁿 英超</span><span class="league-count">2 场</span></div>
-                <div class="league-item"><span class="league-name">🇪🇸 西甲</span><span class="league-count">4 场</span></div>
-                <div class="league-item"><span class="league-name">🇮🇹 意甲</span><span class="league-count">4 场</span></div>
-                <div class="league-item"><span class="league-name">🇩🇪 德甲</span><span class="league-count">3 场</span></div>
+                <div class="league-item"><span class="league-name">加载中...</span><span class="league-count">--</span></div>
             </div>
         </div>
 
@@ -821,8 +925,25 @@
         <div class="footer">© 2026 乔乔竞彩 · 仅供娱乐参考 <span>❤️</span></div>
     </div>
 
+    <!-- 联赛详情模态窗口 -->
+    <div class="modal-overlay" id="leagueModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modalLeagueName">联赛详情</h3>
+                    <span class="modal-count-badge" id="modalCountBadge"></span>
+                </div>
+                <button class="modal-close" onclick="closeLeagueModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalMatchList"></div>
+        </div>
+    </div>
+
     <script>
-        // Theme toggle
+        // ===== 全局存储联赛数据 =====
+        var leaguesData = [];
+
+        // ===== 主题切换 =====
         function toggleTheme() {
             var html = document.documentElement;
             var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -833,7 +954,7 @@
             document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
         })();
 
-        // Live clock
+        // ===== 实时时钟 =====
         function updateClock() {
             var now = new Date();
             var h = String(now.getHours()).padStart(2, '0');
@@ -849,49 +970,12 @@
         updateClock();
         setInterval(updateClock, 1000);
 
-        // Load data
-        function loadData() {
-            fetch('/data.json')
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    document.getElementById('period').textContent = data.period || '--';
-                    if (data.records) document.getElementById('totalMatches').textContent = data.records.length;
-                    if (data.stats) {
-                        animateValue('winRate', 0, parseInt(data.stats.winRate), 1200, '%');
-                        animateValue('totalPredict', 0, data.stats.totalPredict, 1200);
-                        animateValue('winCount', 0, data.stats.winCount, 1200);
-                        animateValue('streak', 0, data.stats.streak, 800);
-                    }
-                    if (data.recommendations && data.recommendations.length > 0) {
-                        document.getElementById('recommendList').innerHTML = data.recommendations.map(function(item, i) {
-                            return '<div class="rec-item" style="animation:fadeUp 0.5s ease ' + (0.1*i) + 's both">' +
-                                '<div class="rec-icon">' + item.icon + '</div>' +
-                                '<div class="rec-info"><div class="rec-name">' + item.name + '</div></div>' +
-                                '<span class="rec-badge">' + item.prediction + '</span></div>';
-                        }).join('');
-                    }
-                    if (data.records && data.records.length > 0) {
-                        document.getElementById('recordBody').innerHTML = data.records.map(function(r) {
-                            var bc = r.result === '胜' ? 'badge-win' : r.result === '负' ? 'badge-lose' : r.result === '待中' ? 'badge-pending' : 'badge-draw';
-                            var sc = r.score === '未开始' ? '<span class="badge badge-pending">⏳ 未开始</span>' : r.score;
-                            return '<tr><td>' + r.date + '</td><td>' + r.league + '</td>' +
-                                '<td style="text-align:left;font-weight:500;color:var(--text)">' + r.teams + '</td>' +
-                                '<td>' + sc + '</td><td style="font-family:DM Mono,monospace;font-weight:600">' + r.goals + '</td>' +
-                                '<td><span class="badge ' + bc + '">' + r.result + '</span></td></tr>';
-                        }).join('');
-                    }
-                })
-                .catch(function() {
-                    document.getElementById('recommendList').innerHTML =
-                        '<div class="rec-item"><div class="rec-icon">⚠️</div>' +
-                        '<div class="rec-info"><div class="rec-name">数据加载失败</div></div></div>';
-                });
-        }
-        loadData();
-
+        // ===== 数字动画 =====
         function animateValue(id, start, end, dur, suf) {
             suf = suf || '';
-            var el = document.getElementById(id), t0 = null;
+            var el = document.getElementById(id);
+            if (!el) return;
+            var t0 = null;
             function step(ts) {
                 if (!t0) t0 = ts;
                 var p = Math.min((ts - t0) / dur, 1);
@@ -901,17 +985,199 @@
             requestAnimationFrame(step);
         }
 
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", function(u) {
-                if (!u) {
-                    var h = window.location.hash;
-                    if (h && (h.includes('invite_token') || h.includes('confirmation_token') || h.includes('recovery_token'))) {
-                        window.netlifyIdentity.open();
-                    }
-                }
+        // ===== 根据比赛记录自动计算统计数据 =====
+        function calcStatsFromRecords(records) {
+            if (!records || records.length === 0) {
+                return { winRate: 0, totalPredict: 0, winCount: 0, streak: 0 };
+            }
+
+            // 只统计已有结果的记录（排除"待中"）
+            var decided = records.filter(function(r) {
+                return r.result === '胜' || r.result === '负' || r.result === '平';
             });
-            window.netlifyIdentity.on("login", function() { document.location.href = "/admin/"; });
+
+            var totalPredict = decided.length;
+            var winCount = decided.filter(function(r) { return r.result === '胜'; }).length;
+            var winRate = totalPredict > 0 ? Math.round((winCount / totalPredict) * 100) : 0;
+
+            // 计算当前连红：从最新的已出结果记录开始往前数连续的"胜"
+            var streak = 0;
+            for (var i = 0; i < decided.length; i++) {
+                if (decided[i].result === '胜') {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+
+            return {
+                winRate: winRate,
+                totalPredict: totalPredict,
+                winCount: winCount,
+                streak: streak
+            };
         }
+
+        // ===== 根据比赛记录自动统计联赛数据 =====
+        function calcLeaguesFromRecords(records) {
+            if (!records || records.length === 0) return [];
+
+            var leagueMap = {};
+            var leagueOrder = [];
+
+            records.forEach(function(r) {
+                if (!r.league) return;
+                if (!leagueMap[r.league]) {
+                    leagueMap[r.league] = {
+                        name: r.league,
+                        count: 0,
+                        matches: []
+                    };
+                    leagueOrder.push(r.league);
+                }
+                leagueMap[r.league].count++;
+                leagueMap[r.league].matches.push({
+                    teams: r.teams,
+                    time: r.date || '--',
+                    prediction: r.goals || '--',
+                    status: r.result === '待中' ? '未开始' : (r.score && r.score !== '未开始' ? '已结束' : '未开始'),
+                    score: r.score || '--'
+                });
+            });
+
+            return leagueOrder.map(function(name) { return leagueMap[name]; });
+        }
+
+        // ===== 加载数据 =====
+        function loadData() {
+            fetch('/data.json')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+
+                    // 1. 更新统计周期
+                    document.getElementById('period').textContent = data.period || '--';
+
+                    // 2. 渲染比赛记录
+                    var records = data.records || [];
+                    document.getElementById('totalMatches').textContent = records.length;
+
+                    if (records.length > 0) {
+                        document.getElementById('recordBody').innerHTML = records.map(function(r) {
+                            var bc = r.result === '胜' ? 'badge-win' : r.result === '负' ? 'badge-lose' : r.result === '待中' ? 'badge-pending' : 'badge-draw';
+                            var sc = r.score === '未开始' ? '<span class="badge badge-pending">⏳ 未开始</span>' : r.score;
+                            return '<tr><td>' + r.date + '</td><td>' + r.league + '</td>' +
+                                '<td style="text-align:left;font-weight:500;color:var(--text)">' + r.teams + '</td>' +
+                                '<td>' + sc + '</td><td style="font-family:DM Mono,monospace;font-weight:600">' + r.goals + '</td>' +
+                                '<td><span class="badge ' + bc + '">' + r.result + '</span></td></tr>';
+                        }).join('');
+                    } else {
+                        document.getElementById('recordBody').innerHTML = '<tr><td colspan="6" style="color:var(--text-dim);padding:30px">暂无比赛记录</td></tr>';
+                    }
+
+                    // 3. 根据比赛记录自动计算胜率统计
+                    var stats = calcStatsFromRecords(records);
+                    animateValue('winRate', 0, stats.winRate, 1200, '%');
+                    animateValue('totalPredict', 0, stats.totalPredict, 1200);
+                    animateValue('winCount', 0, stats.winCount, 1200);
+                    animateValue('streak', 0, stats.streak, 800);
+
+                    // 4. 根据比赛记录自动统计联赛数据（如果data.json中没有leagues字段）
+                    if (data.leagues && data.leagues.length > 0) {
+                        leaguesData = data.leagues;
+                    } else {
+                        leaguesData = calcLeaguesFromRecords(records);
+                    }
+
+                    renderLeagues(leaguesData);
+
+                    // 5. 渲染今日推荐
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        document.getElementById('recommendList').innerHTML = data.recommendations.map(function(item, i) {
+                            return '<div class="rec-item" style="animation:fadeUp 0.5s ease ' + (0.1*i) + 's both">' +
+                                '<div class="rec-icon">' + item.icon + '</div>' +
+                                '<div class="rec-info"><div class="rec-name">' + item.name + '</div></div>' +
+                                '<span class="rec-badge">' + item.prediction + '</span></div>';
+                        }).join('');
+                    } else {
+                        document.getElementById('recommendList').innerHTML =
+                            '<div class="rec-item"><div class="rec-icon">📭</div>' +
+                            '<div class="rec-info"><div class="rec-name">暂无推荐</div></div></div>';
+                    }
+                })
+                .catch(function() {
+                    document.getElementById('recommendList').innerHTML =
+                        '<div class="rec-item"><div class="rec-icon">⚠️</div>' +
+                        '<div class="rec-info"><div class="rec-name">数据加载失败，请检查 data.json</div></div></div>';
+                    document.getElementById('recordBody').innerHTML =
+                        '<tr><td colspan="6" style="color:var(--text-dim);padding:30px">数据加载失败</td></tr>';
+                });
+        }
+
+        // ===== 渲染联赛列表 =====
+        function renderLeagues(leagues) {
+            if (!leagues || leagues.length === 0) {
+                document.getElementById('leagueList').innerHTML =
+                    '<div class="league-item"><span class="league-name">暂无联赛数据</span><span class="league-count">0 场</span></div>';
+                return;
+            }
+
+            document.getElementById('leagueList').innerHTML = leagues.map(function(league, index) {
+                return '<div class="league-item" onclick="openLeagueModal(' + index + ')">' +
+                    '<span class="league-name">' + league.name + '</span>' +
+                    '<span class="league-count">' + league.count + ' 场</span></div>';
+            }).join('');
+        }
+
+        // ===== 打开联赛详情模态窗口 =====
+        function openLeagueModal(leagueIndex) {
+            var league = leaguesData[leagueIndex];
+            if (!league) return;
+
+            document.getElementById('modalLeagueName').textContent = league.name;
+            document.getElementById('modalCountBadge').textContent = '共 ' + league.count + ' 场比赛';
+
+            var container = document.getElementById('modalMatchList');
+            if (league.matches && league.matches.length > 0) {
+                container.innerHTML = league.matches.map(function(match) {
+                    var statusClass = match.status === '已结束' ? 'ended' : (match.status === '进行中' ? 'live' : 'upcoming');
+                    var statusText = match.status || '未开始';
+                    return '<div class="match-item">' +
+                        '<div class="match-teams">' + match.teams + '</div>' +
+                        '<div class="match-meta">' +
+                            '<span>⏰ ' + match.time + '</span>' +
+                            (match.score && match.score !== '--' ? '<span>⚽ ' + match.score + '</span>' : '') +
+                            '<span class="match-prediction">🎯 ' + match.prediction + '</span>' +
+                            '<span class="match-status-tag ' + statusClass + '">' + statusText + '</span>' +
+                        '</div></div>';
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="modal-empty">暂无详细比赛信息</div>';
+            }
+
+            var modal = document.getElementById('leagueModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ===== 关闭模态窗口 =====
+        function closeLeagueModal() {
+            var modal = document.getElementById('leagueModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 点击遮罩层关闭
+        document.getElementById('leagueModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLeagueModal();
+        });
+
+        // ESC键关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLeagueModal();
+        });
+
+        // ===== 启动 =====
+        loadData();
     </script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </body>
