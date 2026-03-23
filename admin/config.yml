@@ -1,6 +1,8 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: w992665802/qqjc
   branch: main
+  auth_endpoint: auth
 
 media_folder: "images"
 public_folder: "/images"
@@ -14,7 +16,6 @@ collections:
         file: "data.json"
         description: "管理页面所有数据内容"
         fields:
-          # ========== 基础设置 ==========
           - label: "统计周期"
             name: "period"
             widget: "string"
@@ -24,9 +25,8 @@ collections:
             name: "siteLink"
             widget: "string"
             required: false
-            hint: "点击页面顶部Logo时跳转的外部链接，不填则不跳转"
+            hint: "点击页面顶部Logo时跳转的外部链接"
 
-          # ========== 今日推荐 ==========
           - label: "推荐列表"
             name: "recommendations"
             widget: "list"
@@ -36,25 +36,20 @@ collections:
                 name: "icon"
                 widget: "string"
                 default: "⭐"
-                hint: "输入emoji，例如：🔥 ⭐ ⚽ 🏆"
 
               - label: "比赛名称"
                 name: "name"
                 widget: "string"
-                hint: "例如：023纽约城VS迈阿密国际"
 
               - label: "预测结果"
                 name: "prediction"
                 widget: "string"
-                hint: "例如：3+4 或 2+3"
 
               - label: "跳转链接（可选）"
                 name: "link"
                 widget: "string"
                 required: false
-                hint: "点击该推荐卡片时跳转的外部链接，不填则不可点击"
 
-          # ========== 比赛记录 ==========
           - label: "比赛记录列表"
             name: "records"
             widget: "list"
@@ -63,27 +58,22 @@ collections:
               - label: "日期"
                 name: "date"
                 widget: "string"
-                hint: "例如：03-22"
 
               - label: "联赛"
                 name: "league"
                 widget: "string"
-                hint: "例如：英超、西甲、意甲、德甲（热门联赛按此字段自动分组）"
 
               - label: "比赛双方"
                 name: "teams"
                 widget: "string"
-                hint: "例如：曼城 vs 阿森纳"
 
               - label: "比分"
                 name: "score"
                 widget: "string"
-                hint: "已结束填比分如 2-1，未开始填 未开始"
 
               - label: "进球预测"
                 name: "goals"
                 widget: "string"
-                hint: "例如：3 或 1+2"
 
               - label: "结果"
                 name: "result"
@@ -102,4 +92,3 @@ collections:
                 name: "link"
                 widget: "string"
                 required: false
-                hint: "点击该行时跳转的外部链接，不填则不可点击"
