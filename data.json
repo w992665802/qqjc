@@ -1,15 +1,18 @@
 {
   "period": "2026-03-01 至 2026-04-01",
+  "siteLink": "https://example.com",
   "recommendations": [
     {
       "icon": "🔥",
       "name": "023纽约城VS迈阿密国际",
-      "prediction": "3+4"
+      "prediction": "3+4",
+      "link": "https://www.dongqiudi.com/match/12345"
     },
     {
       "icon": "⭐",
       "name": "025奥格斯堡VS斯图加特",
-      "prediction": "2+3"
+      "prediction": "2+3",
+      "link": "https://www.dongqiudi.com/match/12346"
     },
     {
       "icon": "⭐",
@@ -24,7 +27,8 @@
       "teams": "西班牙人 vs 赫塔费",
       "score": "未开始",
       "goals": "1+2",
-      "result": "待中"
+      "result": "待中",
+      "link": "https://www.dongqiudi.com/match/10001"
     },
     {
       "date": "03-21",
@@ -32,7 +36,8 @@
       "teams": "曼城 vs 阿森纳",
       "score": "2-1",
       "goals": "3",
-      "result": "胜"
+      "result": "胜",
+      "link": "https://www.dongqiudi.com/match/10002"
     },
     {
       "date": "03-20",
